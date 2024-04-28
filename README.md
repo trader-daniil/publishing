@@ -30,4 +30,6 @@
 ## Пример работы
 
 Проверить работоспособность можно в ТГ [боте](https://t.me/devman_publishingBot) и в группе [вк](https://vk.com/club225711224)
+![test](https://github.com/trader-daniil/publishing/assets/74257219/0ca674d6-aa61-408a-b3ed-c1346953256a)
+
 
