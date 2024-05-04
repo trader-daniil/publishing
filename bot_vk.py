@@ -7,14 +7,10 @@ import os
 import vk_api as vk
 
 
-load_dotenv()
-
 LANGUAGE_CODE = 'ru'
 
 
-def echo(event, vk_api):
-    project_id = os.getenv('PROJECT_ID')
-    tg_user_id = os.getenv('TG_USER_ID')
+def response_from_dialog_flow(event, vk_api, project_id, tg_user_id):
     dialog_response = detect_intent_texts(
         project_id=project_id,
         session_id=tg_user_id,
@@ -29,6 +25,9 @@ def echo(event, vk_api):
         )
 
 if __name__ == "__main__":
+    load_dotenv()
+    project_id = os.getenv('PROJECT_ID')
+    tg_user_id = os.getenv('TG_USER_ID')
     vk_token = os.getenv('VK_GROUP_TOKEN')
     vk_session = vk.VkApi(token=vk_token)
     vk_api = vk_session.get_api()
@@ -36,4 +35,9 @@ if __name__ == "__main__":
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            echo(event, vk_api)
+            response_from_dialog_flow(
+                event,
+                vk_api,
+                project_id=project_id,
+                tg_user_id=tg_user_id,
+            )

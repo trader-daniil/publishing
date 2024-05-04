@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from dialog import detect_intent_texts
 
 
-load_dotenv()
+from functools import partial
+
 
 
 LANGUAGE_CODE = 'ru'
@@ -15,10 +16,8 @@ def start(update, context):
         text="I'm a bot, please talk to me!",
     )
 
-def echo(update, context):
+def response_from_dialog_flow(update, context, project_id, tg_user_id):
     recieved_message = update.message.text
-    project_id = os.getenv('PROJECT_ID')
-    tg_user_id = os.getenv('TG_USER_ID')
     dialog_flow_response = detect_intent_texts(
         project_id=project_id,
         session_id=tg_user_id,
@@ -34,7 +33,10 @@ def echo(update, context):
 
 
 def main():
+    load_dotenv()
     tg_token = os.getenv('TG_BOT_TOKEN')
+    project_id = os.getenv('PROJECT_ID')
+    tg_user_id = os.getenv('TG_USER_ID')
     updater = Updater(
         token=tg_token,
         use_context=True,
@@ -45,9 +47,14 @@ def main():
         start,
     )
     dispatcher.add_handler(start_handler)
+
     echo_handler = MessageHandler(
         Filters.text & (~Filters.command),
-        echo,
+        partial(
+            response_from_dialog_flow,
+            project_id=project_id,
+            tg_user_id=tg_user_id,
+        )
     )
     dispatcher.add_handler(echo_handler)
     updater.start_polling()
