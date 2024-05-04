@@ -27,8 +27,8 @@ def response_from_dialog_flow(update, context, project_id, tg_user_id):
     
     if dialog_flow_response:
         context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=dialog_flow_response,
+            chat_id=update.effective_chat.id,
+            text=dialog_flow_response,
     )
 
 

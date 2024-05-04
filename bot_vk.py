@@ -16,6 +16,7 @@ def response_from_dialog_flow(event, vk_api, project_id, tg_user_id):
         session_id=tg_user_id,
         texts=(event.text,),
         language_code=LANGUAGE_CODE,
+        empty_response=True,
     )
     if dialog_response:
         vk_api.messages.send(
