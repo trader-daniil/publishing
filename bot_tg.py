@@ -7,8 +7,8 @@ from dialog import detect_intent_texts
 from functools import partial
 
 
-
 LANGUAGE_CODE = 'ru'
+
 
 def start(update, context):
     context.bot.send_message(
@@ -16,7 +16,8 @@ def start(update, context):
         text="I'm a bot, please talk to me!",
     )
 
-def response_from_dialog_flow(update, context, project_id, tg_user_id):
+
+def get_response_from_dialog_flow(update, context, project_id, tg_user_id):
     recieved_message = update.message.text
     dialog_flow_response = detect_intent_texts(
         project_id=project_id,
@@ -24,11 +25,9 @@ def response_from_dialog_flow(update, context, project_id, tg_user_id):
         texts=(recieved_message,),
         language_code=LANGUAGE_CODE,
     )
-    
-    if dialog_flow_response:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=dialog_flow_response,
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=dialog_flow_response['fulfillment_text'],
     )
 
 
@@ -51,13 +50,14 @@ def main():
     echo_handler = MessageHandler(
         Filters.text & (~Filters.command),
         partial(
-            response_from_dialog_flow,
+            get_response_from_dialog_flow,
             project_id=project_id,
             tg_user_id=tg_user_id,
         )
     )
     dispatcher.add_handler(echo_handler)
     updater.start_polling()
+
 
 if __name__ == '__main__':
     main()

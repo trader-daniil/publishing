@@ -10,20 +10,20 @@ import vk_api as vk
 LANGUAGE_CODE = 'ru'
 
 
-def response_from_dialog_flow(event, vk_api, project_id, tg_user_id):
+def get_response_from_dialog_flow(event, vk_api, project_id, tg_user_id):
     dialog_response = detect_intent_texts(
         project_id=project_id,
         session_id=tg_user_id,
         texts=(event.text,),
         language_code=LANGUAGE_CODE,
-        empty_response=True,
     )
-    if dialog_response:
+    if not dialog_response['is_fallback']:
         vk_api.messages.send(
             user_id=event.user_id,
-            message=dialog_response,
-            random_id=random.randint(1,1000)
+            message=dialog_response['fulfillment_text'],
+            random_id=random.randint(1, 1000)
         )
+
 
 if __name__ == "__main__":
     load_dotenv()
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            response_from_dialog_flow(
+            get_response_from_dialog_flow(
                 event,
                 vk_api,
                 project_id=project_id,
